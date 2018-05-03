@@ -162,7 +162,7 @@ def loadTickCsv(fileName,symbol):
 def loadTbCsv(fileName, dbName, symbol):
     """将TradeBlazer导出的csv格式的历史分钟数据插入到Mongo数据库中"""
     import csv
-    
+
     start = time()
     print('开始读取CSV文件%s中的数据插入到%s的%s中' %(fileName, dbName, symbol))
     
