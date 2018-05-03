@@ -1,4 +1,7 @@
 # encoding: UTF-8
+from collections import deque
+from queue import Queue
+
 import matplotlib.pyplot as plt
 import csv
 import numpy as np
@@ -38,10 +41,22 @@ def drawImage(date,price):
     ax.xaxis.set_major_formatter(ticker.FuncFormatter(format_date))
     fig.autofmt_xdate()
     plt.show()
+
+def timeWindoAanalysis(timeSpace,scope):
+    if len(date) != len(price):
+        return
+    queue = deque()
+    for i in range(len(date)):
+        d = date[i]
+        p = price[i]
+        if queue.== 0:
+            queue.
+
+
 if __name__ == '__main__':
     #加载数据
     loadTickCsvAsNumpy('P:\\Work\\quant\\m\\m主力连续_20180323.csv')
-    #分析;
+    #分析
 
     #画图
     drawImage(date,price)
