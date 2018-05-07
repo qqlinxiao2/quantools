@@ -13,6 +13,12 @@ from datetime import datetime
 N = 0
 date = []
 price = []
+pointList = []
+class Point(object):
+    def __init__(self,date,price,direction):
+        self.date = date
+        self.price = price
+        self.direction = direction
 
 def loadTickCsvAsNumpy(fileName):
     # return np.loadtxt(fileName, dtype=float, skiprows=1, converters={2:mdates.strpdate2num('%Y-%m-%d %H:%M:%S.%f')},
@@ -40,6 +46,14 @@ def drawImage(date,price):
     ax.set_ylabel("y label")
     #ax.xaxis.set_major_locator(mdates.HourLocator())
     #ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
+    for point in pointList:
+        #plt.text(key, value, 'this', ha='center', va='bottom', fontsize=7)
+        if point.direction:
+            plt.annotate('buy', xy=(point.date, point.price), xytext=(point.date, point.price-10),
+                        arrowprops=dict(facecolor='red',arrowstyle='->'))
+        else:
+            plt.annotate('sell', xy=(point.date, point.price), xytext=(point.date, point.price+10),
+                         arrowprops=dict(facecolor='green', arrowstyle='->'))
     plt.plot(ind, price)
     ax.xaxis.set_major_formatter(ticker.FuncFormatter(format_date))
     fig.autofmt_xdate()
@@ -50,8 +64,7 @@ def timeWindoAanalysis(timeSpace,scope):
         return
     queue = deque()
     for i in range(len(date)):
-        d = date[i]
-        p = price[i]
+        #时间窗队列操作
         if queue.__len__() == 0:
             queue.append(i)
         else:
@@ -63,17 +76,27 @@ def timeWindoAanalysis(timeSpace,scope):
                 #无效时间窗 插入
                 queue.appendleft(index)
                 queue.append(i)
+            #动量判断
+            left = queue.popleft()
+            right = queue.pop()
+            queue.appendleft(left)
+            queue.append(right)
+            sub = price[right] - price[left]
+            if abs(sub) >= scope:
+                print(date[right],sub)
+                pointList.append(Point(right,price[right],sub > 0))
+                queue.clear()
 
 
 
 
 if __name__ == '__main__':
-    # #加载数据
-    # loadTickCsvAsNumpy('F:\BaiduNetdiskDownload\TICK数据\m\m主力连续_20180323.csv')
-    # #分析
-    # timeWindoAanalysis(60,5)
-    # #画图
-    # #drawImage(date,price)
+    #加载数据
+    loadTickCsvAsNumpy('P:\Work\quant\m\m主力连续_20180323.csv')
+    #分析
+    timeWindoAanalysis(5,3)
+    #画图
+    drawImage(date,price)
 
     # t = datetime.strptime('2018-03-22 21:00:00.379', '%Y-%m-%d %H:%M:%S.%f')
     # t2 = datetime.strptime('2018-03-22 21:00:01.879', '%Y-%m-%d %H:%M:%S.%f')
